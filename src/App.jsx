@@ -31,7 +31,7 @@ export default function App() {
 
   const getUsdValues = async () => {
     const promises = currencies.map(async ({ symbol }) => {
-      const url = `http://rest.coinapi.io/v1/exchangerate/${symbol}/USD?apikey=${apiKey}`;
+      const url = `https://rest.coinapi.io/v1/exchangerate/${symbol}/USD?apikey=${apiKey}`;
       try {
         const response = await fetch(url);
         const data = await response.json();
