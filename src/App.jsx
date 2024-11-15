@@ -1,35 +1,96 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import WalletEntry from './components/WalletEntry';
 
-function App() {
-  const [count, setCount] = useState(0)
+const currencies = [
+  { name: "Bitcoin", symbol: "BTC" },
+  { name: "Litecoin", symbol: "LTC" },
+  { name: "Ethereum", symbol: "ETH" },
+  { name: "Ethereum Classic", symbol: "ETC" },
+  { name: "Stellar Lumens", symbol: "XLM" },
+  { name: "Dash", symbol: "DASH" },
+  { name: "Ripple", symbol: "XRP" },
+  { name: "Zcash", symbol: "ZEC" },
+];
 
+export default function App(){
+  const [balances, setBalances] = useState({});
+  const [usdValues, setUsdValues] = useState({});
+  const apiKey = "3DC2D11E-6F10-4CB0-9458-4EA916D4B68C";
+
+
+  useEffect(() => {
+    const storedBalances = JSON.parse(localStorage.getItem("balances"));
+    setBalances(storedBalances);
+    getUsdValues();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("balances", JSON.stringify(balances));
+  }, [balances]);
+
+  const getUsdValues = async () => {
+    const promises = currencies.map(async ({ symbol }) => {
+      const url = `http://rest.coinapi.io/v1/exchangerate/${symbol}/USD?apikey=${apiKey}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return { symbol, price: parseFloat(data.rate.toFixed(3)) }
+      } catch (error) {
+        console.error(`Error fetching USD value for ${symbol}:`, error);
+        return { symbol, price: 0 }
+      }
+    });
+
+    const prices = await Promise.all(promises);
+    const usdValuesObject = {}
+    prices.forEach(({ symbol, price }) => {
+      usdValuesObject[symbol] = price;
+    });
+    setUsdValues(usdValuesObject);
+  };
+
+ 
+  const handleBalanceChange = (symbol, value) => {
+    const newValue = Math.max(parseFloat(value) || 0, 0); 
+  
+    setBalances((prev) => {
+      const updatedBalances = {
+        ...prev,
+        [symbol]: newValue,
+      };
+  
+      localStorage.setItem("balances", JSON.stringify(updatedBalances));
+  
+      return updatedBalances;
+    });
+  };
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+        <h1>Wallet Tracker</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Coin Name</th>
+            <th>Ticker</th>
+            <th>USD Value</th>
+            <th>User Balance</th>
+            <th>Balance in USD</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currencies.map(({ name, symbol }) => (
+            <WalletEntry
+              key={symbol}
+              name={name}
+              symbol={symbol}
+              usdValue={usdValues[symbol]}
+              balance={balances[symbol]}
+              onBalanceChange={(value) => handleBalanceChange(symbol, value)}
+            />
+          ))}
+        </tbody>
+      </table>
     </>
-  )
-}
 
-export default App
+  );
+};
