@@ -1,8 +1,10 @@
-# React + Vite
+# SBA 320
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Description
+This repository was created to fulfill the requirements of SBA-320. It is a crypto wallet application that allows users to input their balances of 10 top cryptocurrencies and convert their values to USD. Prices are retrieved using CoinAPI.
 
-Currently, two official plugins are available:
+## How to Use
+The application is a table with rows for BTC, LTC, ETH, ETC, XLM, DASH, XRP, and ZEC. Change the values in each coin's respective **User Balance** field to convert the balance to USD value.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies Used
+ReactJS
