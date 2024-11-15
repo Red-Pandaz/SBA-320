@@ -8,3 +8,5 @@ The application is a table with rows for BTC, LTC, ETH, ETC, XLM, DASH, XRP, and
 
 ## Technologies Used
 ReactJS
+
+This project is currently deployed to[Netlify](https://calm-kelpie-3bfe64.netlify.app)
